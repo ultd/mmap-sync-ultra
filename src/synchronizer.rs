@@ -110,7 +110,6 @@ impl Synchronizer {
         let mut hasher = SeaHasher::new();
         hasher.write(&data);
         let checksum = hasher.finish();
-        println!("checksum: {}", checksum);
 
         // acquire next available data file idx and write data to it
         let (new_idx, reset) = state.acquire_next_idx(grace_duration);
