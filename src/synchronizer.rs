@@ -205,12 +205,12 @@ impl Synchronizer {
 
 #[cfg(test)]
 mod tests {
-    // use crate::instance::InstanceVersion;
+    use crate::instance::InstanceVersion;
     use crate::synchronizer::Synchronizer;
     use rand::distributions::Uniform;
     use rand::prelude::*;
     use serde::{Deserialize, Serialize};
-    use std::collections::HashMap;
+    use std::collections::{BTreeMap, HashMap};
     use std::fs;
     use std::path::Path;
     use std::time::Duration;
@@ -218,7 +218,7 @@ mod tests {
     #[derive(Deserialize, Serialize, Debug, PartialEq)]
     struct MockEntity {
         version: u32,
-        map: HashMap<u64, Vec<f32>>,
+        map: BTreeMap<u64, Vec<f32>>,
     }
 
     struct MockEntityGenerator {
@@ -235,7 +235,7 @@ mod tests {
         fn gen(&mut self, n: usize) -> MockEntity {
             let mut entity = MockEntity {
                 version: self.rng.gen(),
-                map: HashMap::new(),
+                map: BTreeMap::new(),
             };
             let range = Uniform::<f32>::from(0.0..100.0);
             for _ in 0..n {
@@ -310,10 +310,10 @@ mod tests {
         assert_eq!(reset, false);
         assert!(Path::new(&state_path).exists());
         assert!(!Path::new(&data_path_1).exists());
-        // assert_eq!(
-        //     reader.version().unwrap(),
-        //     InstanceVersion(17993823348391421896)
-        // );
+        assert_eq!(
+            reader.version().unwrap(),
+            InstanceVersion(874863810035328968)
+        );
 
         // check that first time scoped `read` works correctly and switches the data
         fetch_and_assert_entity(&mut reader, &entity, true);
@@ -329,10 +329,10 @@ mod tests {
         assert!(Path::new(&state_path).exists());
         assert!(Path::new(&data_path_0).exists());
         assert!(Path::new(&data_path_1).exists());
-        // assert_eq!(
-        //     reader.version().unwrap(),
-        //     InstanceVersion(17293092493381861389)
-        // );
+        assert_eq!(
+            reader.version().unwrap(),
+            InstanceVersion(1473812873661663869)
+        );
 
         // check that another scoped `read` works correctly and switches the data
         fetch_and_assert_entity(&mut reader, &entity, true);
@@ -342,19 +342,19 @@ mod tests {
         let (size, reset) = writer.write(&entity, Duration::from_secs(1)).unwrap();
         assert!(size > 0);
         assert_eq!(reset, false);
-        // assert_eq!(
-        //     reader.version().unwrap(),
-        //     InstanceVersion(2052615585732231180)
-        // );
+        assert_eq!(
+            reader.version().unwrap(),
+            InstanceVersion(3689327704118666598)
+        );
 
         let entity = entity_generator.gen(200);
         let (size, reset) = writer.write(&entity, Duration::from_secs(1)).unwrap();
         assert!(size > 0);
         assert_eq!(reset, false);
-        // assert_eq!(
-        //     reader.version().unwrap(),
-        //     InstanceVersion(2028229517339787277)
-        // );
+        assert_eq!(
+            reader.version().unwrap(),
+            InstanceVersion(5389754322311466247)
+        );
 
         fetch_and_assert_entity(&mut reader, &entity, true);
     }
