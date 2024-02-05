@@ -205,7 +205,7 @@ impl Synchronizer {
 
 #[cfg(test)]
 mod tests {
-    use crate::instance::InstanceVersion;
+    // use crate::instance::InstanceVersion;
     use crate::synchronizer::Synchronizer;
     use rand::distributions::Uniform;
     use rand::prelude::*;
