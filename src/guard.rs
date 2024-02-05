@@ -12,7 +12,7 @@
 //!
 //! The `synchronizer` module utilizes this `guard` module to manage memory safety, allowing
 //! users to focus on their application logic.
-use rkyv::{Archive, Archived};
+// use rkyv::{Archive, Archived};
 use std::ops::Deref;
 
 use crate::instance::InstanceVersion;
@@ -44,15 +44,15 @@ impl<'a> Drop for ReadGuard<'a> {
 }
 
 /// `Synchronizer` result
-pub struct ReadResult<'a, T: Archive> {
+pub struct ReadResult<'a, T> {
     _guard: ReadGuard<'a>,
-    entity: &'a Archived<T>,
+    entity: T,
     switched: bool,
 }
 
-impl<'a, T: Archive> ReadResult<'a, T> {
+impl<'a, T> ReadResult<'a, T> {
     /// Creates new `ReadResult` with specified parameters
-    pub(crate) fn new(_guard: ReadGuard<'a>, entity: &'a Archived<T>, switched: bool) -> Self {
+    pub(crate) fn new(_guard: ReadGuard<'a>, entity: T, switched: bool) -> Self {
         ReadResult {
             _guard,
             entity,
@@ -66,11 +66,11 @@ impl<'a, T: Archive> ReadResult<'a, T> {
     }
 }
 
-impl<'a, T: Archive> Deref for ReadResult<'a, T> {
-    type Target = Archived<T>;
+impl<'a, T> Deref for ReadResult<'a, T> {
+    type Target = T;
 
     /// Dereferences stored `entity` for easier access
-    fn deref(&self) -> &Archived<T> {
-        self.entity
+    fn deref(&self) -> &T {
+        &self.entity
     }
 }
